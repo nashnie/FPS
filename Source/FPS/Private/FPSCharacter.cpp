@@ -4,6 +4,8 @@
 #include "../Public/FPSCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
+#include "FPSWeaponActor.h"
 
 // Sets default values
 AFPSCharacter::AFPSCharacter()
@@ -18,12 +20,23 @@ AFPSCharacter::AFPSCharacter()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
+
+	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
 }
 
 // Called when the game starts or when spawned
 void AFPSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	FPSWeaponActor = GetWorld()->SpawnActor<AFPSWeaponActor>(StarterWeaponClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	if (FPSWeaponActor)
+	{
+		FPSWeaponActor->SetOwner(this);
+		FPSWeaponActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponAttachSocketName);
+	}
 }
 
 void AFPSCharacter::MoveForward(float Value)
@@ -44,11 +57,30 @@ void AFPSCharacter::MoveRight(float Value)
 	}
 }
 
+void AFPSCharacter::StartCrouch()
+{
+	Crouch();
+	UE_LOG(LogTemp, Log, TEXT("StartCrouch"));
+}
+
+void AFPSCharacter::EndCrouch()
+{
+	UnCrouch();
+	UE_LOG(LogTemp, Log, TEXT("EndCrouch"));
+}
+
+void AFPSCharacter::Fire()
+{
+	if (FPSWeaponActor)
+	{
+		FPSWeaponActor->Fire();
+	}
+}
+
 // Called every frame
 void AFPSCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -59,10 +91,26 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis("MoveForward", this, &AFPSCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AFPSCharacter::MoveRight);
 
+	PlayerInputComponent->BindAxis("LookUp", this, &ACharacter::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("Turn", this, &ACharacter::AddControllerYawInput);
+
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	//PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ACharacter::Crouch);
-	//PlayerInputComponent->BindAction("EndCrouch", IE_Released, this, &ACharacter::UnCrouch);
+
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AFPSCharacter::StartCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AFPSCharacter::EndCrouch);
+
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AFPSCharacter::Fire);
 
 	UE_LOG(LogTemp, Log, TEXT("SetupPlayerInputComponent"));
+}
+
+FVector AFPSCharacter::GetPawnViewLocation() const
+{
+	if (CameraComp)
+	{
+		return CameraComp->GetComponentLocation();
+	}
+
+	return Super::GetPawnViewLocation();
 }
 

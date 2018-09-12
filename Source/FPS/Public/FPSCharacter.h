@@ -8,6 +8,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class AFPSWeaponActor;
 
 UCLASS()
 class FPS_API AFPSCharacter : public ACharacter
@@ -25,6 +26,18 @@ protected:
 	virtual void MoveForward(float Value);
 
 	virtual void MoveRight(float Value);
+
+	virtual void StartCrouch();
+
+	virtual void EndCrouch();
+
+	virtual void Fire();
+
+	AFPSWeaponActor* FPSWeaponActor;
+
+	TSubclassOf<AFPSWeaponActor> StarterWeaponClass;
+
+	FName WeaponAttachSocketName;
 
 public:	
 	// Called every frame

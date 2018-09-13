@@ -42,9 +42,9 @@ protected:
 
 	virtual void PlayFireEffect();
 
-	virtual void PlayImpactEffect(FVector SpawnLocation, FRotator SpawnRotation, FVector SpawnScale);
+	virtual void PlayImpactEffect(FVector TargetLocation);
 
-	virtual void PlaySmokeEffect(FVector SpawnLocation, FRotator SpawnRotation, FVector SpawnScale, FVector TargetLocation);
+	virtual void PlaySmokeEffect(FVector TargetLocation);
 
 public:	
 	// Called every frame

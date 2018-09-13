@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "FPSWeaponActor.h"
-#include "..\Public\FPSWeaponActor.h"
 #include "DrawDebugHelpers.h"
 #include "kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 
 //准星
 //枪头特效、impact特效、track特效
@@ -15,7 +15,7 @@ AFPSWeaponActor::AFPSWeaponActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	MeshComp = CreateDefaultSubobject(TEXT("MeshComponent"));
+	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComponent"));
 	RootComponent = MeshComp;
 
 	MuzzlePointName = "MuzzlePoint";
@@ -55,9 +55,11 @@ void AFPSWeaponActor::Tick(float DeltaTime)
 void AFPSWeaponActor::Fire()
 {
 	AActor* MyOwner = GetOwner();
+	FVector EyeLocation;
+	FRotator EyeRotator;
+	MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotator);
 
-	FVector EyeLocation = MyOwner->GetActorEyesViewPoint();
-	FVector ShotDirection = MyOwner->GetActorRotation().Vector();
+	FVector ShotDirection = EyeRotator.Vector();
 	FVector TraceEnd = MyOwner->GetActorLocation() + ShotDirection * 1000.0f;
 
 	ECollisionChannel COLLISION_WEAPON;

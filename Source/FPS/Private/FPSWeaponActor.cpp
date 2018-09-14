@@ -37,7 +37,11 @@ void AFPSWeaponActor::PlayFireEffect()
 void AFPSWeaponActor::PlayImpactEffect(FVector ImpactPoint)
 {
 	UE_LOG(LogTemp, Log, TEXT("PlayImpactEffect"));
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEffect, ImpactPoint, FRotator::ZeroRotator, FVector::ZeroVector);
+	FVector MuzzleLocation = MeshComp->GetSocketLocation(MuzzlePointName);
+	FVector ShotDirection = ImpactPoint - MuzzleLocation;
+	ShotDirection.Normalize();
+
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEffect, ImpactPoint, ShotDirection.Rotation());
 }
 
 void AFPSWeaponActor::PlaySmokeEffect(FVector TargetImpactPoint)

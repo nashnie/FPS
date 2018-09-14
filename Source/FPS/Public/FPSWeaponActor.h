@@ -22,13 +22,13 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	UParticleSystem* FireEffect;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	UParticleSystem* SmokeEffect;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	UParticleSystem* ImpactEffect;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
@@ -40,16 +40,16 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	USkeletalMeshComponent* MeshComp;
 
-	virtual void PlayFireEffect();
+	void PlayFireEffect();
 
-	virtual void PlayImpactEffect(FVector TargetLocation);
+	void PlayImpactEffect(FVector ImpactPoint);
 
-	virtual void PlaySmokeEffect(FVector TargetLocation);
+	void PlaySmokeEffect(FVector TargetImpactPoint);
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-	virtual void Fire();
+	void Fire();
 };

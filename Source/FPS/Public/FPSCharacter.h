@@ -33,8 +33,11 @@ protected:
 
 	virtual void Fire();
 
+	void LookUp(float Val);
+
 	AFPSWeaponActor* FPSWeaponActor;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	TSubclassOf<AFPSWeaponActor> StarterWeaponClass;
 
 	FName WeaponAttachSocketName;

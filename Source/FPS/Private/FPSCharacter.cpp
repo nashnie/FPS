@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "FPSCharacter.h"
-#include "../Public/FPSCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
@@ -22,6 +21,10 @@ AFPSCharacter::AFPSCharacter()
 	CameraComp->SetupAttachment(SpringArmComp);
 
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
+
+	WeaponAttachSocketName = "WeaponSocket";
+
+	//UE_LOG(LogTemp, Log, TEXT("AFPSCharacter %s"), SpringArmComp->bUsePawnControlRotation ? "1" : "0");
 }
 
 // Called when the game starts or when spawned
@@ -37,13 +40,15 @@ void AFPSCharacter::BeginPlay()
 		FPSWeaponActor->SetOwner(this);
 		FPSWeaponActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponAttachSocketName);
 	}
+
+	//UE_LOG(LogTemp, Log, TEXT("BeginPlay %s"), SpringArmComp->bUsePawnControlRotation ? "1" : "0");
 }
 
 void AFPSCharacter::MoveForward(float Value)
 {
 	if (Value != 0.0f)
 	{
-		UE_LOG(LogTemp, Log, TEXT("AddMovementInput %f"), Value);
+		//UE_LOG(LogTemp, Log, TEXT("AddMovementInput %f"), Value);
 		AddMovementInput(GetActorForwardVector(), Value);
 	}
 }
@@ -52,7 +57,7 @@ void AFPSCharacter::MoveRight(float Value)
 {
 	if (Value != 0.0f)
 	{
-		UE_LOG(LogTemp, Log, TEXT("MoveRight %f"), Value);
+		//UE_LOG(LogTemp, Log, TEXT("MoveRight %f"), Value);
 		AddMovementInput(GetActorRightVector(), Value);
 	}
 }
@@ -71,10 +76,22 @@ void AFPSCharacter::EndCrouch()
 
 void AFPSCharacter::Fire()
 {
+	UE_LOG(LogTemp, Log, TEXT("Fire"));
 	if (FPSWeaponActor)
 	{
 		FPSWeaponActor->Fire();
 	}
+}
+
+void AFPSCharacter::LookUp(float Val)
+{
+	//UE_LOG(LogTemp, Log, TEXT("AddControllerPitchInput %f%s"), Val, Controller->IsLocalPlayerController() ? TEXT("True") : TEXT("False"));
+	//UE_LOG(LogTemp, Log, TEXT("AddControllerPitchInput IgnoreLookInput %s"), Controller->IsLookInputIgnored() ? TEXT("True") : TEXT("False"));
+	//APlayerController* PC = Cast<APlayerController>(Controller);
+	//UE_LOG(LogTemp, Log, TEXT("AddControllerPitchInput IgnoreLookInput %f"), PC->InputPitchScale);//
+
+	//UE_LOG(LogTemp, Log, TEXT("LookUp %s"), SpringArmComp->bUsePawnControlRotation ? "1" : "0");
+	Super::AddControllerPitchInput(Val);
 }
 
 // Called every frame
@@ -91,7 +108,7 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis("MoveForward", this, &AFPSCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AFPSCharacter::MoveRight);
 
-	PlayerInputComponent->BindAxis("LookUp", this, &ACharacter::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &AFPSCharacter::LookUp);
 	PlayerInputComponent->BindAxis("Turn", this, &ACharacter::AddControllerYawInput);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);

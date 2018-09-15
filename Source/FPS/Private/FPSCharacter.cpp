@@ -25,6 +25,8 @@ AFPSCharacter::AFPSCharacter()
 	WeaponAttachSocketName = "WeaponSocket";
 
 	//UE_LOG(LogTemp, Log, TEXT("AFPSCharacter %s"), SpringArmComp->bUsePawnControlRotation ? "1" : "0");
+
+	OnTakeRadialDamage.AddDynamic(this, &AFPSCharacter::TakeRadialDamageHandler);
 }
 
 // Called when the game starts or when spawned
@@ -92,6 +94,11 @@ void AFPSCharacter::LookUp(float Val)
 
 	//UE_LOG(LogTemp, Log, TEXT("LookUp %s"), SpringArmComp->bUsePawnControlRotation ? "1" : "0");
 	Super::AddControllerPitchInput(Val);
+}
+
+void AFPSCharacter::TakeRadialDamageHandler(AActor * DamagedActor, float Damage, const UDamageType * DamageType, FVector Origin, FHitResult HitInfo, AController * InstigatedBy, AActor * DamageCauser)
+{
+	UE_LOG(LogTemp, Log, TEXT("TakeRadialDamageHandler, %f"), Damage);
 }
 
 // Called every frame

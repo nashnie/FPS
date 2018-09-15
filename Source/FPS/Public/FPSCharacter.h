@@ -35,6 +35,8 @@ protected:
 
 	void LookUp(float Val);
 
+	void TakeRadialDamageHandler(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, FVector Origin, FHitResult HitInfo, class AController* InstigatedBy, AActor* DamageCauser);
+
 	AFPSWeaponActor* FPSWeaponActor;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
